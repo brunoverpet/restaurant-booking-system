@@ -58,6 +58,8 @@ node ace migration:fresh     # Drop all + migrate
 node ace db:seed             # Exécuter les seeders
 node ace make:migration      # Créer une migration
 node ace make:model          # Créer un modèle
+node ace make:model room -m  # Créer modèle + migration ensemble
+node ace make:seeder room    # Créer un seeder
 ```
 
 ### Docker
@@ -97,6 +99,24 @@ tests/
 ├── unit/                # Tests unitaires (timeout: 2s)
 ├── functional/          # Tests fonctionnels (timeout: 30s)
 ```
+
+---
+
+## Schéma de Données
+
+### Relations
+
+```
+Room ──hasMany──▶ Table ──hasMany──▶ Reservation
+```
+
+### Tables
+
+| Table | Colonnes clés | Contraintes |
+|-------|---------------|-------------|
+| `rooms` | id, name, capacity | — |
+| `tables` | id, room_id, number, seats, position_x, position_y | FK room_id, unique(room_id, number) |
+| `reservations` | id, table_id, customer_name, customer_email, date, time_slot, status | FK table_id, index(table_id, date, time_slot) |
 
 ### Import Aliases
 
