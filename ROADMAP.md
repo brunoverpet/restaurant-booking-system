@@ -27,12 +27,13 @@ Suivi de l'avancement du projet.
 
 ## Phase 3 - Interface Réservation 🚧
 
-- [ ] `RoomsController` - Contrôleur pour les salles
-  - [ ] Méthode `index` - Liste des salles
-  - [ ] Méthode `show` - Détail d'une salle avec ses tables
-- [ ] Routes `/rooms` et `/rooms/:id`
-- [ ] Page `rooms/index.vue` - Liste des salles
-- [ ] Page `rooms/show.vue` - Plan de salle interactif
+- [x] `RoomsController` - Contrôleur pour les salles
+  - [x] Méthode `index` - Liste des salles
+  - [x] Méthode `show` - Détail d'une salle avec ses tables
+- [x] Routes `/rooms` et `/rooms/:id`
+- [x] DTOs (`app/dtos/room_dto.ts`, `app/dtos/table_dto.ts`)
+- [x] Page `rooms/index.vue` - Liste des salles
+- [ ] Page `rooms/show.vue` - Plan de salle interactif (basique fait, positionnement à faire)
 - [ ] Composant `TableCard.vue` - Affichage d'une table (disponible/verrouillée)
 - [ ] Intégration du LockService dans le contrôleur
 
