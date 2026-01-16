@@ -11,7 +11,7 @@ defineProps<{
 <template>
   <Head title="Room" />
   <h1>Room page</h1>
-  <div v-for="table in room" :key="table.id">
+  <div v-for="table in room.tables" :key="table.id">
     {{ table }}
   </div>
 </template>
