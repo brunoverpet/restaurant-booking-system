@@ -33,8 +33,8 @@ Suivi de l'avancement du projet.
 - [x] Routes `/rooms` et `/rooms/:id`
 - [x] DTOs (`app/dtos/room_dto.ts`, `app/dtos/table_dto.ts`)
 - [x] Page `rooms/index.vue` - Liste des salles
-- [ ] Page `rooms/show.vue` - Plan de salle interactif (basique fait, positionnement à faire)
-- [ ] Composant `TableCard.vue` - Affichage d'une table (disponible/verrouillée)
+- [x] Page `rooms/show.vue` - Plan de salle interactif (basique fait, positionnement à faire)
+- [x] Composant `TableCard.vue` - Affichage d'une table (disponible/verrouillée)
 - [ ] Intégration du LockService dans le contrôleur
 
 ---
