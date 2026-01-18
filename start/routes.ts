@@ -15,3 +15,4 @@ router.on('/').renderInertia('home')
 
 router.get('/rooms', [RoomsController, 'index'])
 router.get('/rooms/:id', [RoomsController, 'show'])
+router.post('/rooms/:id/lock', [RoomsController, 'lockRoom'])

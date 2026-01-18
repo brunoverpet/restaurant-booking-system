@@ -4,7 +4,8 @@ export class LockService {
   async acquire(resource: string, ownerId: string, ttl: number) {
     const script = `return redis.call("set", KEYS[1], ARGV[1], "NX", "EX", ARGV[2])`
 
-    return redis.eval(script, 1, resource, ownerId, ttl)
+    const result = await redis.eval(script, 1, resource, ownerId, ttl)
+    return result === 'OK'
   }
 
   async release(resource: string, ownerId: string) {
