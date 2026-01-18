@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
+import { Form, Head, useForm } from '@inertiajs/vue3'
 import { InferPageProps } from '@adonisjs/inertia/types'
 import type RoomsController from '#controllers/rooms_controller'
 import { ref } from 'vue'
@@ -18,6 +18,13 @@ function handleTableSelect(id: number) {
     selectedTableId.value = id
   }
 }
+
+const ownerId = localStorage.getItem('guest_id') || ''
+console.log(ownerId)
+
+const form = useForm({
+  ownerId: ownerId,
+})
 </script>
 
 <template>
@@ -37,5 +44,14 @@ function handleTableSelect(id: number) {
         @select="handleTableSelect"
       />
     </div>
+    <form @submit.prevent="form.post(`/rooms/${selectedTableId}/lock`)">
+      <button
+        type="submit"
+        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+        :disabled="selectedTableId === null"
+      >
+        Reserve Table
+      </button>
+    </form>
   </div>
 </template>
