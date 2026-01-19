@@ -24,16 +24,23 @@ export default class RoomsController {
   }
 
   async lockRoom({ params, request, response, session }: HttpContext) {
-    const { id } = params
+    // const { "table-id", "room-id" } = params
+    const tableId = params['table-id']
+    const roomId = params['room-id']
     const ownerId = request.input('ownerId')
+    // console.log(`Locking table ${tableId} in room ${roomId} by owner ${ownerId}`)
 
-    const result = await this.lockService.acquire('room:' + id, 'owner:' + ownerId, 300)
+    const result = await this.lockService.acquire(
+      'owner:' + ownerId,
+      `roomId:${roomId}+tableId:${tableId}`,
+      300
+    )
 
     if (result) {
       session.flash('success', 'Room locked successfully.')
     } else {
       session.flash('error', 'Failed to lock the room. It may already be locked.')
     }
-    // return response.redirect().back()
+    return response.redirect().back()
   }
 }
