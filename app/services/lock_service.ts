@@ -18,8 +18,14 @@ export class LockService {
     return "OK"`
 
     const result = await redis.eval(script, 2, ownerId, resource, ttl)
+    const resourceParsed = resource.split(':')
+
     if (result === 'OK') {
-      transmit.broadcast('room-table-lock-changed', { resource })
+      transmit.broadcast('room-table-lock-changed', {
+        tableId: resourceParsed[3],
+        roomId: resourceParsed[1],
+        ownerId,
+      })
     }
     return result === 'OK'
   }

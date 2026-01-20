@@ -32,7 +32,7 @@ export default class RoomsController {
 
     const result = await this.lockService.acquire(
       'owner:' + ownerId,
-      `roomId:${roomId}+tableId:${tableId}`,
+      `roomId:${roomId}:tableId:${tableId}`,
       300
     )
 

@@ -2,43 +2,37 @@
 import { Head, useForm, usePage } from '@inertiajs/vue3'
 import type { InferPageProps, SharedProps } from '@adonisjs/inertia/types'
 import type RoomsController from '#controllers/rooms_controller'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { ref } from 'vue'
 import TableEntity from '~/components/TableEntity.vue'
-import { transmit } from '~/libs/transmit'
-import { Subscription } from '@adonisjs/transmit-client'
+import { useGuest } from '~/composables/use_guest'
+import { useRoomChannel } from '~/composables/use_room_channel'
 
-defineProps<{
+const props = defineProps<{
   room: InferPageProps<RoomsController, 'show'>['room']
 }>()
 
-const guestId = ref<string | null>(null)
-let subscription: Subscription
+type RoomType = InferPageProps<RoomsController, 'show'>['room']
+type BaseTable = RoomType['tables'][number]
+type UiTable = BaseTable & {
+  lockedBy?: string | null
+}
 
-onMounted(async () => {
-  let storedGuestId = localStorage.getItem('guest_id')
-
-  if (!storedGuestId) {
-    storedGuestId = crypto.randomUUID()
-    localStorage.setItem('guest_id', storedGuestId)
-  }
-
-  guestId.value = storedGuestId
-
-  subscription = transmit.subscription('room-table-lock-changed')
-  await subscription.create()
-
-  subscription.onMessage((data) => {
-    console.log(data)
-  })
-})
-
-onUnmounted(() => {
-  if (subscription) {
-    subscription.delete()
-  }
-})
-
+const page = usePage<SharedProps>()
 const selectedTableId = ref<number | null>(null)
+const tables = ref<UiTable[]>(props.room.tables)
+const guestId = useGuest()
+let ownerId = guestId.value
+
+useRoomChannel('room-table-lock-changed', (data) => {
+  const table = tables.value.find((table) => table.id.toString() === data.tableId)
+  if (table) {
+    table.lockedBy = data.ownerId
+  }
+})
+
+const form = useForm({
+  ownerId,
+})
 
 function handleTableSelect(id: number) {
   if (selectedTableId.value === id) {
@@ -48,13 +42,7 @@ function handleTableSelect(id: number) {
   }
 }
 
-const ownerId = localStorage.getItem('guest_id') || ''
-
-const form = useForm({
-  ownerId: ownerId,
-})
-
-const page = usePage<SharedProps>()
+console.log(tables.value)
 </script>
 
 <template>
@@ -63,12 +51,13 @@ const page = usePage<SharedProps>()
 
   <div class="grid grid-cols-4 gap-10">
     <div
-      v-for="table in room.tables"
+      v-for="table in tables"
       :key="table.id"
       class="p-4 flex items-center justify-center cursor-pointer"
       :class="{ 'col-span-2': table.seats > 4 }"
     >
       <TableEntity
+        :is-locked="!!table.lockedBy"
         :is-selected="selectedTableId === table.id"
         :table="table"
         @select="handleTableSelect"

@@ -7,7 +7,8 @@
     "jsxImportSource": "vue",
     "paths": {
       "~/*": ["./*"],
-    },
+      "#shared/*": ["../shared/*"]
+    }
   },
-  "include": ["./**/*.ts", "./**/*.vue"],
+  "include": ["./**/*.ts", "./**/*.vue"]
 }

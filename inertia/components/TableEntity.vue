@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { TableDto } from '#dtos/table_dto'
 
-const props = defineProps<{
+defineProps<{
   isSelected: boolean
+  isLocked: boolean
   table: TableDto
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'select', id: number): void
 }>()
 </script>
@@ -15,7 +16,7 @@ const emit = defineEmits<{
   <div
     @click="$emit('select', table.id)"
     class="flex w-full h-16 relative items-center justify-center rounded-2xl"
-    :class="isSelected ? 'bg-teal-400' : 'bg-gray-200'"
+    :class="isLocked ? 'bg-red-500' : isSelected ? 'bg-teal-400' : 'bg-gray-200'"
   >
     <div class="absolute -top-3 w-full flex justify-evenly">
       <div
