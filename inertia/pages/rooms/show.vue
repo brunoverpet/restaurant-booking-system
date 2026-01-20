@@ -2,16 +2,19 @@
 import { Head, useForm, usePage } from '@inertiajs/vue3'
 import type { InferPageProps, SharedProps } from '@adonisjs/inertia/types'
 import type RoomsController from '#controllers/rooms_controller'
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import TableEntity from '~/components/TableEntity.vue'
+import { transmit } from '~/libs/transmit'
+import { Subscription } from '@adonisjs/transmit-client'
 
 defineProps<{
   room: InferPageProps<RoomsController, 'show'>['room']
 }>()
 
 const guestId = ref<string | null>(null)
+let subscription: Subscription
 
-onMounted(() => {
+onMounted(async () => {
   let storedGuestId = localStorage.getItem('guest_id')
 
   if (!storedGuestId) {
@@ -20,6 +23,19 @@ onMounted(() => {
   }
 
   guestId.value = storedGuestId
+
+  subscription = transmit.subscription('room-table-lock-changed')
+  await subscription.create()
+
+  subscription.onMessage((data) => {
+    console.log(data)
+  })
+})
+
+onUnmounted(() => {
+  if (subscription) {
+    subscription.delete()
+  }
 })
 
 const selectedTableId = ref<number | null>(null)
@@ -30,7 +46,6 @@ function handleTableSelect(id: number) {
   } else {
     selectedTableId.value = id
   }
-  console.log(selectedTableId.value)
 }
 
 const ownerId = localStorage.getItem('guest_id') || ''

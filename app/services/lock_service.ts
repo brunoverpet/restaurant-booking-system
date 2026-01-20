@@ -1,4 +1,5 @@
 import redis from '@adonisjs/redis/services/main'
+import transmit from '@adonisjs/transmit/services/main'
 
 export class LockService {
   async acquire(ownerId: string, resource: string, ttl: number) {
@@ -17,6 +18,9 @@ export class LockService {
     return "OK"`
 
     const result = await redis.eval(script, 2, ownerId, resource, ttl)
+    if (result === 'OK') {
+      transmit.broadcast('room-table-lock-changed', { resource })
+    }
     return result === 'OK'
   }
 
