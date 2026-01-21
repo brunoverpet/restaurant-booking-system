@@ -39,6 +39,16 @@ export class LockService {
     return "OK"
 `
     const result = await redis.eval(script, 2, ownerId, resource)
+
+    if (result === 'OK') {
+      const resourceParsed = resource.split(':')
+      transmit.broadcast('room-table-lock-changed', {
+        tableId: resourceParsed[3],
+        roomId: resourceParsed[1],
+        ownerId: null,
+      })
+    }
+
     return result === 'OK'
   }
 
@@ -48,5 +58,10 @@ export class LockService {
 
   async getOwner(ownerId: string) {
     return redis.get(ownerId)
+  }
+
+  async getTableOwner(roomId: number, tableId: number) {
+    const resourceKey = `roomId:${roomId}:tableId:${tableId}`
+    return redis.get(resourceKey)
   }
 }
