@@ -17,5 +17,6 @@ router.on('/').renderInertia('home')
 router.get('/rooms', [RoomsController, 'index'])
 router.get('/rooms/:id', [RoomsController, 'show'])
 router.post('/rooms/:room-id/lock-table/:table-id', [RoomsController, 'lockRoom'])
+router.post('/rooms/:room-id/unlock-table/:table-id', [RoomsController, 'unlockRoom'])
 
 transmit.registerRoutes()
