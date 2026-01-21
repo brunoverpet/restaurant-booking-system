@@ -17,8 +17,20 @@ export default class RoomsController {
 
   async show({ params, inertia }: HttpContext) {
     const { id } = params
+
     const room = await Room.query().where('id', id).preload('tables').firstOrFail()
-    const roomData = toRoomWithTablesDto(room)
+    const lockedTables: Record<number, string> = {}
+
+    await Promise.all(
+      room.tables.map(async (table) => {
+        const ownerId = await this.lockService.getTableOwner(room.id, table.id)
+        if (ownerId) {
+          lockedTables[table.id] = ownerId
+        }
+      })
+    )
+
+    const roomData = toRoomWithTablesDto(room, lockedTables)
 
     return inertia.render('rooms/show', { room: roomData })
   }
@@ -40,6 +52,26 @@ export default class RoomsController {
       session.flash('success', 'Room locked successfully.')
     } else {
       session.flash('error', 'Failed to lock the room. It may already be locked.')
+    }
+    return response.redirect().back()
+  }
+
+  async unlockRoom({ params, request, response, session }: HttpContext) {
+    // const { "table-id", "room-id" } = params
+    const tableId = params['table-id']
+    const roomId = params['room-id']
+    const ownerId = request.input('ownerId')
+    // console.log(`Locking table ${tableId} in room ${roomId} by owner ${ownerId}`)
+
+    const result = await this.lockService.release(
+      'owner:' + ownerId,
+      `roomId:${roomId}:tableId:${tableId}`
+    )
+
+    if (result) {
+      session.flash('success', 'Room unlocked successfully.')
+    } else {
+      session.flash('error', 'Failed to unlock the room. It may already be unlocked.')
     }
     return response.redirect().back()
   }
