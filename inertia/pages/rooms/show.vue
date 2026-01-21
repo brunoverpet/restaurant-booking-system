@@ -2,47 +2,28 @@
 import { Head, useForm, usePage } from '@inertiajs/vue3'
 import type { InferPageProps, SharedProps } from '@adonisjs/inertia/types'
 import type RoomsController from '#controllers/rooms_controller'
-import { ref } from 'vue'
 import TableEntity from '~/components/TableEntity.vue'
 import { useGuest } from '~/composables/use_guest'
-import { useRoomChannel } from '~/composables/use_room_channel'
+import { useRoomTables } from '~/composables/use_room_tables'
 
 const props = defineProps<{
   room: InferPageProps<RoomsController, 'show'>['room']
 }>()
 
-type RoomType = InferPageProps<RoomsController, 'show'>['room']
-type BaseTable = RoomType['tables'][number]
-type UiTable = BaseTable & {
-  lockedBy?: string | null
-}
-
 const page = usePage<SharedProps>()
-const selectedTableId = ref<number | null>(null)
-const tables = ref<UiTable[]>(props.room.tables)
 const guestId = useGuest()
-let ownerId = guestId.value
 
-useRoomChannel('room-table-lock-changed', (data) => {
-  const table = tables.value.find((table) => table.id.toString() === data.tableId)
-  if (table) {
-    table.lockedBy = data.ownerId
-  }
-})
+const {
+  tables,
+  selectedTableId,
+  handleTableSelect,
+  isSelectedTableLockedByMe,
+  isSelectedTableLocked,
+} = useRoomTables(props.room.tables, guestId.value)
 
 const form = useForm({
-  ownerId,
+  ownerId: guestId.value,
 })
-
-function handleTableSelect(id: number) {
-  if (selectedTableId.value === id) {
-    selectedTableId.value = null
-  } else {
-    selectedTableId.value = id
-  }
-}
-
-console.log(tables.value)
 </script>
 
 <template>
@@ -67,9 +48,19 @@ console.log(tables.value)
       <button
         type="submit"
         class="mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-        :disabled="selectedTableId === null"
+        :disabled="selectedTableId === null || isSelectedTableLocked"
       >
         Reserve Table
+      </button>
+    </form>
+
+    <form @submit.prevent="form.post(`/rooms/${room.id}/unlock-table/${selectedTableId}`)">
+      <button
+        type="submit"
+        class="mt-4 px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50"
+        :disabled="!isSelectedTableLockedByMe"
+      >
+        Cancel reservation
       </button>
     </form>
   </div>
