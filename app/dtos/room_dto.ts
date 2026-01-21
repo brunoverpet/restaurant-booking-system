@@ -19,9 +19,16 @@ export function toRoomDto(room: Room): RoomDto {
   }
 }
 
-export function toRoomWithTablesDto(room: Room): RoomWithTablesDto {
+export function toRoomWithTablesDto(
+  room: Room,
+  lockedTables: Record<number, string> = {}
+): RoomWithTablesDto {
   return {
     ...toRoomDto(room),
-    tables: room.tables.map(toTableDto),
+    tables: room.tables.map((table) => {
+      const lockedBy = lockedTables[table.id] || null
+
+      return toTableDto(table, lockedBy)
+    }),
   }
 }

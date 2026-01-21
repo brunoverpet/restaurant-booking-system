@@ -7,9 +7,10 @@ export interface TableDto {
   seats: number
   positionX: number
   positionY: number
+  lockedBy: string | null
 }
 
-export function toTableDto(table: Table): TableDto {
+export function toTableDto(table: Table, lockedBy: string | null = null): TableDto {
   return {
     id: table.id,
     roomId: table.roomId,
@@ -17,5 +18,6 @@ export function toTableDto(table: Table): TableDto {
     seats: table.seats,
     positionX: table.positionX,
     positionY: table.positionY,
+    lockedBy: lockedBy,
   }
 }
