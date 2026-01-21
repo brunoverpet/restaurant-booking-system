@@ -35,15 +35,15 @@ Suivi de l'avancement du projet.
 - [x] Page `rooms/index.vue` - Liste des salles
 - [x] Page `rooms/show.vue` - Plan de salle interactif (basique fait, positionnement à faire)
 - [x] Composant `TableCard.vue` - Affichage d'une table (disponible/verrouillée)
-- [ ] Intégration du LockService dans le contrôleur
+- [x] Intégration du LockService dans le contrôleur
 
 ---
 
 ## Phase 4 - Temps réel (SSE)
 
-- [ ] Broadcast des événements de verrouillage
-- [ ] Composable `useRealtimeRoom.ts` - Écoute des mises à jour
-- [ ] Mise à jour automatique de l'UI quand une table est verrouillée/libérée
+- [x] Broadcast des événements de verrouillage
+- [x] Composable `useRealtimeRoom.ts` - Écoute des mises à jour
+- [x] Mise à jour automatique de l'UI quand une table est verrouillée/libérée
 
 ---
 
