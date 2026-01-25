@@ -5,6 +5,7 @@ import type RoomsController from '#controllers/rooms_controller'
 import TableEntity from '~/components/TableEntity.vue'
 import { useGuest } from '~/composables/use_guest'
 import { useRoomTables } from '~/composables/use_room_tables'
+import { Button } from '~/components/ui/button'
 
 const props = defineProps<{
   room: InferPageProps<RoomsController, 'show'>['room']
@@ -45,7 +46,7 @@ const form = useForm({
       />
     </div>
     <form @submit.prevent="form.post(`/rooms/${room.id}/lock-table/${selectedTableId}`)">
-      <button
+      <Button
         type="submit"
         class="mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
         :disabled="selectedTableId === null || isSelectedTableLocked"
