@@ -31,7 +31,7 @@ const form = useForm({
   <Head title="Room" />
   <h1>Room {{ room.name }}</h1>
 
-  <div class="grid grid-cols-4 gap-10">
+  <div class="grid grid-cols-2 gap-32 mt-20">
     <div
       v-for="table in tables"
       :key="table.id"
@@ -45,24 +45,31 @@ const form = useForm({
         @select="handleTableSelect"
       />
     </div>
+  </div>
+  <div class="flex space-x-4 mt-10">
     <form @submit.prevent="form.post(`/rooms/${room.id}/lock-table/${selectedTableId}`)">
       <Button
         type="submit"
-        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+        variant="default"
+        class="cursor-pointer"
         :disabled="selectedTableId === null || isSelectedTableLocked"
       >
         Reserve Table
-      </button>
+      </Button>
     </form>
 
-    <form @submit.prevent="form.post(`/rooms/${room.id}/unlock-table/${selectedTableId}`)">
-      <button
+    <form
+      @submit.prevent="form.post(`/rooms/${room.id}/unlock-table/${selectedTableId}`)"
+      v-if="isSelectedTableLocked && isSelectedTableLockedByMe"
+    >
+      <Button
         type="submit"
-        class="mt-4 px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50"
+        variant="destructive"
+        class="cursor-pointer"
         :disabled="!isSelectedTableLockedByMe"
       >
         Cancel reservation
-      </button>
+      </Button>
     </form>
   </div>
   <div
