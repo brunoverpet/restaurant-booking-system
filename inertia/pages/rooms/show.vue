@@ -31,7 +31,7 @@ const form = useForm({
   <Head title="Room" />
   <h1>Room {{ room.name }}</h1>
 
-  <div class="grid grid-cols-2 gap-32 mt-20">
+  <div class="grid grid-cols-2 gap-32 mt-20" :class="{ 'grid-cols-4': tables.length > 4 }">
     <div
       v-for="table in tables"
       :key="table.id"
